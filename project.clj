@@ -9,4 +9,15 @@
                  [net.thegeez/clj-browserchannel-jetty-adapter "0.0.1"]
                  #_[net.thegeez/clj-browserchannel-netty-adapter "0.0.1"]
                  ]
-  )
+  :plugins [[lein-cljsbuild "1.0.3"]
+            [lein-ring "0.8.12"]]
+  :hooks [leiningen.cljsbuild]
+  :source-paths ["src/clj"]
+  :cljsbuild {
+              :builds {
+                       :main {
+                              :source-paths ["src/cljs"]
+                              :compiler {:output-to "resources/public/js/cljs.js"
+                                         :optimizations :simple
+                                         :pretty-print true}
+                              :jar true}}})

@@ -1,21 +1,12 @@
 (ns superchat.client
   (:require
-   [superchat.dom-helpers :as dom]
+   [bc.dom-helpers :as dom]
    [goog.net.BrowserChannel :as goog-browserchannel]
    [goog.events :as events]
    [goog.events.KeyCodes :as key-codes]
    [goog.events.KeyHandler :as key-handler]))
 
-(defn handler []
-  (let [h (goog.net.BrowserChannel.Handler.)]
-    (set! (.-channelOpened h)
-          (fn [channel]
-            (enable-chat)))
-    (set! (.-channelHandleArray h)
-          (fn [x data]
-            (let [msg (aget data "msg")]
-              (dom/append (dom/get-element "room") (dom/element :div (str "MSG::" msg))))))
-    h))
+(def channel (goog.net.BrowserChannel.))
 
 (defn say [text]
   (.sendMap channel (doto (js-obj)
@@ -38,7 +29,17 @@
                   "click"
                   handler)))
 
-(def channel (goog.net.BrowserChannel.))
+(defn handler []
+  (let [h (goog.net.BrowserChannel.Handler.)]
+    (set! (.-channelOpened h)
+          (fn [channel]
+            (enable-chat)))
+    (set! (.-channelHandleArray h)
+          (fn [x data]
+            (let [msg (aget data "msg")]
+              (dom/append (dom/get-element "room") (dom/element :div (str "MSG::" msg))))))
+    h))
+
 
 (defn ^:export run []
   (events/listen js/window "unload" #(do
